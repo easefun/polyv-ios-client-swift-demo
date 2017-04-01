@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol rotateFullScreen {
+protocol RotateFullScreen {
     func fullScreenAction(_ sender:UIButton)
     func backButtonAction()
     func addOrientationObserver()
