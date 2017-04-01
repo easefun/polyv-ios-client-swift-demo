@@ -17,7 +17,7 @@ class UploadDemoViewController:UIViewController {
     var assetsLibrary = ALAssetsLibrary()
     lazy var videoPlayer:SkinVideoViewController = {
         let width = self.view.bounds.size.width
-        let vp:SkinVideoViewController = SkinVideoViewController(frame: CGRect(x: self.view.frame.origin.x, y: self.view.frame.origin.y, width: width, height: width*(9.0/16.0)))!
+        let vp:SkinVideoViewController = SkinVideoViewController(frame: CGRect(x: self.view.frame.origin.x, y: self.view.frame.origin.y, width: width, height: width*(9.0/16.0)))
         vp.dimissCompleteBlock = {
             vp.stop()
         }

@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		E9161F131E8E206200F497D8 /* PolyvPlayerDemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91E4BD91E8D586C007A8D83 /* PolyvPlayerDemoViewController.swift */; };
+		E9161F151E8E6BBF00F497D8 /* SkinVideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9161F141E8E6BBF00F497D8 /* SkinVideoViewController.swift */; };
+		E9161F171E8E8A4D00F497D8 /* SkinVideoProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9161F161E8E8A4D00F497D8 /* SkinVideoProtocols.swift */; };
 		E91E4B251E8D11C8007A8D83 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91E4B241E8D11C8007A8D83 /* AppDelegate.swift */; };
 		E91E4B2C1E8D11C8007A8D83 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E91E4B2B1E8D11C8007A8D83 /* Assets.xcassets */; };
 		E91E4B2F1E8D11C8007A8D83 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E91E4B2D1E8D11C8007A8D83 /* LaunchScreen.storyboard */; };
@@ -75,6 +77,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E9161F141E8E6BBF00F497D8 /* SkinVideoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SkinVideoViewController.swift; sourceTree = "<group>"; };
+		E9161F161E8E8A4D00F497D8 /* SkinVideoProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SkinVideoProtocols.swift; sourceTree = "<group>"; };
 		E91E4B211E8D11C8007A8D83 /* polyv-ios-client-swift-demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "polyv-ios-client-swift-demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E91E4B241E8D11C8007A8D83 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E91E4B2B1E8D11C8007A8D83 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -227,11 +231,11 @@
 				E91E4B3B1E8D12CF007A8D83 /* VideoListController.swift */,
 				E91E4B3F1E8D12DC007A8D83 /* DetailViewWithNavigationController.swift */,
 				E91E4B981E8D23DF007A8D83 /* DownloadListController.swift */,
+				E91E4BDB1E8D6847007A8D83 /* UploadDemoViewController.swift */,
 				E91E4B2B1E8D11C8007A8D83 /* Assets.xcassets */,
 				E91E4B2D1E8D11C8007A8D83 /* LaunchScreen.storyboard */,
 				E91E4B301E8D11C8007A8D83 /* Info.plist */,
 				E91E4B381E8D12C2007A8D83 /* Swift-Bridge-Header.h */,
-				E91E4BDB1E8D6847007A8D83 /* UploadDemoViewController.swift */,
 			);
 			path = "polyv-ios-client-swift-demo";
 			sourceTree = "<group>";
@@ -309,6 +313,8 @@
 				E91E4B7D1E8D15F4007A8D83 /* SkinVideoViewController.m */,
 				E91E4B7E1E8D15F4007A8D83 /* SkinVideoViewControllerView.h */,
 				E91E4B7F1E8D15F4007A8D83 /* SkinVideoViewControllerView.m */,
+				E9161F141E8E6BBF00F497D8 /* SkinVideoViewController.swift */,
+				E9161F161E8E8A4D00F497D8 /* SkinVideoProtocols.swift */,
 			);
 			name = SkinPlayer;
 			sourceTree = "<group>";
@@ -477,11 +483,13 @@
 				E91E4B6C1E8D155F007A8D83 /* FMDatabasePool.m in Sources */,
 				E91E4BDC1E8D6847007A8D83 /* UploadDemoViewController.swift in Sources */,
 				E91E4B781E8D15BF007A8D83 /* PLVIndicator.m in Sources */,
+				E9161F171E8E8A4D00F497D8 /* SkinVideoProtocols.swift in Sources */,
 				E91E4B791E8D15BF007A8D83 /* PLVSlider.m in Sources */,
 				E91E4B6D1E8D155F007A8D83 /* FMDatabaseQueue.m in Sources */,
 				E91E4B251E8D11C8007A8D83 /* AppDelegate.swift in Sources */,
 				E91E4B3C1E8D12CF007A8D83 /* VideoListController.swift in Sources */,
 				E91E4B7A1E8D15BF007A8D83 /* SubTitleLabel.m in Sources */,
+				E9161F151E8E6BBF00F497D8 /* SkinVideoViewController.swift in Sources */,
 				E91E4B991E8D23DF007A8D83 /* DownloadListController.swift in Sources */,
 				E91E4B6E1E8D155F007A8D83 /* FMResultSet.m in Sources */,
 				E91E4B401E8D12DC007A8D83 /* DetailViewWithNavigationController.swift in Sources */,
