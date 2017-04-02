@@ -18,14 +18,14 @@ class DownloadListController:UITableViewController {
         let width = UIScreen.main.bounds.size.width
         let rect = CGRect(x: 0, y: 0, width: width, height: width*(9.0/16.0))
         let v = SkinVideoViewController(frame: rect)
-        v?.configObserver()
-        v?.dimissCompleteBlock = {
-            v?.stop()
-            v?.cancel()
+        v.configObserver()
+        v.dimissCompleteBlock = {
+            v.stop()
+            v.cancel()
 //            v?.cancelObserver()
             
         }
-        return v!
+        return v
     }()
     
     override func viewDidAppear(_ animated: Bool) {

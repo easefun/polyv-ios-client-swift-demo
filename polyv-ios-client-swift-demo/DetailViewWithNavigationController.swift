@@ -18,7 +18,7 @@ class DetailViewWithNavigationController:UIViewController {
     
     lazy var videoPlayer:SkinVideoViewController = {
         let width = self.view.bounds.size.width
-        let vp = SkinVideoViewController(frame: CGRect(x: self.view.frame.origin.x, y: self.view.frame.origin.y, width: width, height: width*(9.0/16.0)))!
+        let vp = SkinVideoViewController(frame: CGRect(x: self.view.frame.origin.x, y: self.view.frame.origin.y, width: width, height: width*(9.0/16.0)))
         vp.configObserver()
         return vp
     }()
@@ -38,13 +38,13 @@ class DetailViewWithNavigationController:UIViewController {
         // 播放指定 vid 的视频
         videoPlayer.vid = video.vid
         view.addSubview(videoPlayer.view)
-        videoPlayer.setParent(self)
+        videoPlayer.parentViewController = self
         // 需要保留导航栏
-        videoPlayer.keepNavigationBar(true)
-        videoPlayer.setNavigation(self.navigationController)
+        videoPlayer.keepNavigationBar = true
+        videoPlayer.navigationController = self.navigationController
         
         // 设置附加组件
-        videoPlayer.setHeadTitle(video.title)
+        videoPlayer.headTitle = video.title
         
 //        videoPlayer.enableDanmuDisplay = false
 //        videoPlayer.enableRateDisplay = false
@@ -52,7 +52,7 @@ class DetailViewWithNavigationController:UIViewController {
         
 //        videoPlayer.teaserEnable = true
         // 开启弹幕
-        videoPlayer.enableDanmu(true)
+        videoPlayer.danmuEnabled = true
         // 是否开启截图
         videoPlayer.enableSnapshot = true
         

@@ -11,6 +11,7 @@ enum panHandlerDirection:Int {
     case horizontal,vertical
 }
 let kPanPrecision:Double = 20
+let USER_DICT_AUTOCONTINUE = "autoContinue"
 
 class SkinVideoViewController:PLVMoviePlayerController {
     /// 播放器销毁回调
@@ -36,8 +37,19 @@ class SkinVideoViewController:PLVMoviePlayerController {
     }
     var panHandler:panHandlerDirection?
     /// 开始播放时间
-    var watchStartTime:TimeInterval
-    var autoContinue = false         // 继续上一次的视频。如果设置为YES,视频将从上次播放停止的位置继续播放
+    var watchStartTime:TimeInterval = 0
+    var autoContinue = false {        // 继续上一次的视频。如果设置为YES,视频将从上次播放停止的位置继续播放
+        didSet {
+            if autoContinue {
+                var autoContinueDict:[String:Any] = UserDefaults.standard.dictionary(forKey: USER_DICT_AUTOCONTINUE) ?? [:]
+                if let startTime = autoContinueDict[self.vid] as? Double {
+                    if startTime > 0 {
+                        self.watchStartTime = startTime
+                    }
+                }
+            }
+        }
+    }
     var isWatchCompleted = false   // 播放是否完成
     
     /// 是否显示弹幕按钮，默认显示
@@ -124,8 +136,8 @@ class SkinVideoViewController:PLVMoviePlayerController {
     var isBitRateViewShowing = false
     var orifinFrame:CGRect!
     
-    var durationTimer = 0
-    var bufferTimer = 0
+    var durationTimer:Timer!
+    var bufferTimer:Timer!
     /// 启用弹幕
     var danmuEnabled = true {
         didSet {
@@ -136,7 +148,7 @@ class SkinVideoViewController:PLVMoviePlayerController {
         }
     }
     fileprivate var danmuManager:PVDanmuManager!
-    fileprivate var danmuSendView:PvDanmuSendView!
+    fileprivate var danmuSendView:PvDanmuSendView?
     /// 设置播放器标题
     var headTitle = "" {
         didSet {
@@ -196,6 +208,10 @@ class SkinVideoViewController:PLVMoviePlayerController {
         self.enableRateDisplay = true
         self.configControlAction()
     }
+    override func play() {
+        self.videoControl.indicatorView.startAnimating()
+        super.play()
+    }
 }
 let pPlayerAnimationTimeinterval = 0.3
 //MARK: - 外部方法
@@ -229,27 +245,283 @@ extension SkinVideoViewController {
     func configObserver () {
         super.delegate = self
         let notificationCenter = NotificationCenter.default
-//        notificationCenter.
+        // 播放状态改变，可配合playbakcState属性获取具体状态
+        notificationCenter.addObserver(self, selector: #selector(onMPMoviePlayerPlaybackStateDidChangeNotification), name: NSNotification.Name.MPMusicPlayerControllerPlaybackStateDidChange, object: nil)
+        // 媒体网络加载状态改变
+        notificationCenter.addObserver(self, selector: #selector(onMPMoviePlayerLoadStateDidChangeNotification), name: NSNotification.Name.MPMoviePlayerLoadStateDidChange, object: nil)
+        // 视频显示就绪
+        notificationCenter.addObserver(self, selector: #selector(onMPMoviePlayerReadyForDisplayDidChangeNotification), name: NSNotification.Name.MPMoviePlayerReadyForDisplayDidChange, object: nil)
+        // 播放时长可用
+        notificationCenter.addObserver(self, selector: #selector(onMPMovieDurationAvailableNotification), name: NSNotification.Name.MPMovieDurationAvailable, object: nil)
+        // 媒体播放完成或用户手动退出, 具体原因通过MPMoviePlayerPlaybackDidFinishReasonUserInfoKey key值确定
+        notificationCenter.addObserver(self, selector: #selector(onMPMoviePlayerPlaybackDidFinishNotification(_:)), name: NSNotification.Name.MPMoviePlayerPlaybackDidFinish, object: nil)
+        // 视频就绪状态改变
+        notificationCenter.addObserver(self, selector: #selector(onMediaPlaybackIsPrearedToPlayDidChangeNotification), name: NSNotification.Name.MPMediaPlaybackIsPreparedToPlayDidChange, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(onMPMoviePlayerNowPlayingMovieDidChangeNotification), name: NSNotification.Name.MPMoviePlayerNowPlayingMovieDidChange, object: nil)
+        self.addOrientationObserver()
+        let pan = UIPanGestureRecognizer(target: self, action: #selector(panHandler(_:)))
+        pan.delegate = self
+        self.view.addGestureRecognizer(pan)
     }
     /// 移除监听
     func cancelObserver() {
         NotificationCenter.default.removeObserver(self)
         removeOrientationObserver()
     }
+    /// 销毁
+    override func cancel() {
+        super.cancel()
+        self.cancelObserver()
+        self.stopBufferTimer()
+        self.stopDurationTimer()
+        self.stallTimer.invalidate()
+    }
+    /// 销毁，在导航控制器中不会执行
+    func dismiss() {
+        self.stopDurationTimer()
+        self.stopBufferTimer()
+        UIView.animate(withDuration: pPlayerAnimationTimeinterval, animations: { 
+            self.view.alpha = 0
+        }) { (_) in
+            self.view.removeFromSuperview()
+            // 回调结束闭包
+            self.dimissCompleteBlock()
+        }
+      self.watchTimer.invalidate()
+        UIApplication.shared.setStatusBarHidden(false, with: .fade)
+    }
+    func roll(info:String, withDuration:TimeInterval, color:UIColor!, font:UIFont = UIFont.systemFont(ofSize: 13) ) {
+        let width = self.frame.size.width
+        let infoLabel = UILabel(frame: CGRect(x: width, y: 0, width: 0, height: 0 ))
+        if let c = color {
+            infoLabel.textColor = c
+        }
+        infoLabel.font = font
+        infoLabel.text = info
+        self.view.addSubview(infoLabel)
+        infoLabel.sizeToFit()
+        UIView.animate(withDuration: duration, delay: 0, options:.curveLinear, animations: {
+            infoLabel.transform = CGAffineTransform(translationX: -width-infoLabel.bounds.size.width, y: 0)
+        }) { (_) in
+            infoLabel.removeFromSuperview()
+        }
+    }
     
- 
 }
 
-// MARK: - 存取器
+// MARK: - 按钮事件
+extension SkinVideoViewController {
+    /// 配置按钮事件
+    func configControlAction() {
+        self.videoControl.playButton.addTarget(self, action: #selector(playButtonClick), for: .touchUpInside)
+        self.videoControl.backButton.addTarget(self, action: #selector(backButtonAction), for: .touchUpInside)
+        self.videoControl.pauseButton.addTarget(self, action: #selector(pauseButtonClick), for: .touchUpInside)
+        self.videoControl.closeButton.addTarget(self, action: #selector(closeButtonClick), for: .touchUpInside)
+        self.videoControl.danmuButton.addTarget(self, action: #selector(danmuButtonClick), for: .touchUpInside)
+        self.videoControl.rateButton.addTarget(self, action: #selector(rateButtonClick(_:)), for: .touchUpInside)
+        self.videoControl.sendDanmuButton.addTarget(self, action: #selector(sendDanmuButtonClick), for: .touchUpInside)
+        self.videoControl.fullScreenButton.addTarget(self, action: #selector(fullScreenAction(_:)), for: .touchUpInside)
+        self.videoControl.bitRateButton.addTarget(self, action: #selector(bitRateButtonClick), for: .touchUpInside)
+        self.videoControl.shrinkScreenButton.addTarget(self, action: #selector(fullScreenAction(_:)), for: .touchUpInside)
+        self.videoControl.slider.addTarget(self, action: #selector(progressSliderValueChanged(_:)), for: .valueChanged)
+        self.videoControl.slider.addTarget(self, action: #selector(progressSliderValueChanged(_:)), for: .touchDragInside)
+        self.videoControl.slider.addTarget(self, action: #selector(progressSliderTouchBegan(_:)), for: .touchDown)
+        self.videoControl.slider.addTarget(self, action: #selector(progressSliderTouchEnded(_:)), for: .touchUpInside)
+        self.videoControl.slider.addTarget(self, action: #selector(progressSliderTouchEnded(_:)), for: .touchUpOutside)
+        self.videoControl.slider.addTarget(self, action: #selector(progressSliderTouchEnded(_:)), for: .touchCancel)
+        self.videoControl.snapshotButton.addTarget(self, action: #selector(snapshot), for: .touchUpInside)
+        self.setProgressSliderMaxMinValues()
+        self.monitorVideoPlayback()
+    }
+    
+    func bitRateViewClick(_ button:UIButton) {
+        self.watchStartTime = super.currentPlaybackTime
+        self.isSwitching = true
+        self.videoControl.bitRateView.isHidden = true
+        let list = ["自动","流畅","高清","超清"]
+        guard button.tag < list.count else {return}
+        super.switch(PvLevel(rawValue: Int32(button.tag))!)
+        self.videoControl.bitRateButton.setTitle(list[button.tag], for: .normal)
+        
+    }
+    func playButtonClick() {
+        self.playButtonClickBlock()
+        self.play()
+        self.videoControl.playButton.isHidden = true
+        self.videoControl.pauseButton.isHidden = false
+    }
+    func pauseButtonClick() {
+        self.pauseButtonClickBlock()
+        self.pause()
+        self.videoControl.playButton.isHidden = false
+        self.videoControl.pauseButton.isHidden = true
+    }
+    func sendDanmuButtonClick() {
+        if let _ = self.danmuSendView {
+            self.danmuSendView = nil
+        }
+        self.danmuSendView = PvDanmuSendView(frame: self.view.bounds)
+        self.view.addSubview(self.danmuSendView!)
+        self.danmuSendView?.deleagte = self
+        self.danmuSendView?.showAction(self.view)
+        super.pause()
+        self.danmuManager.pause()
+    }
+    func danmuButtonClick() {
+        if self.danmuEnabled {
+            self.danmuEnabled = false
+            self.videoControl.sendDanmuButton.isHidden = true
+        } else {
+            self.danmuEnabled = true
+            self.videoControl.sendDanmuButton.isHidden = false
+        }
+    }
+    func rateButtonClick(_ sender:UIButton) {
+        sender.layer.borderColor = UIColor.red.cgColor
+        sender.setTitleColor(UIColor.red, for: .normal)
+        let title = sender.title(for: .normal)!
+        switch title {
+        case "1.25X":
+            sender.setTitle("1.5X", for: .normal)
+            self.currentPlaybackRate = 1.5
+        case "1.5X":
+            sender.setTitle("2X", for: .normal)
+            self.currentPlaybackRate = 2.0
+        case "2X":
+            sender.setTitle("1X", for: .normal)
+            self.currentPlaybackRate = 1.0
+        default:
+            sender.setTitle("1.25X", for: .normal)
+            self.currentPlaybackRate = 1.25
+        }
+    }
+    func closeButtonClick() {
+        self.dismiss()
+    }
+    func bitRateButtonClick() {
+        if !self.isBitRateViewShowing {
+            self.videoControl.bitRateView.isHidden = false
+            self.videoControl.animateHide()
+            self.isBitRateViewShowing = true
+        } else {
+            self.videoControl.bitRateView.isHidden = true
+            self.isBitRateViewShowing = false
+        }
+    }
+    func setProgressSliderMaxMinValues() {
+        let duration = CGFloat(self.duration)
+        self.videoControl.slider.progressMinimumValue = 0.0
+        self.videoControl.slider.progressMaximumValue = duration
+    }
+    func progressSliderTouchBegan(_ slider:UISlider) {
+        self.pause()
+        self.videoControl.cancelAutoFadeOutControlBar()
+    }
+    func progressSliderValueChanged(_ slider:UISlider) {
+        self.isSeeking = true
+        let currentTime = floor(slider.value)
+        let totalTime = floor(self.duration)
+        self.timeLabel = self.getTimeLabelString(withCurrentTime: Double(currentTime), totalTime: totalTime)
+    }
+    func progressSliderTouchEnded(_ slider:UISlider) {
+        self.videoControl.autoFadeOutControlBar()
+        self.currentPlaybackTime = floor(Double(slider.value))
+        self.play()
+        self.isSeeking = false
+    }
+}
+// MARK: - 内部方法
 extension SkinVideoViewController {
     
 }
-// MARK: - 内部方法
 
 extension SkinVideoViewController {
     // MARK:   播放器通知响应
     func onMPMoviePlayerNowPlayingMovieDidChangeNotification() {
-        self.isBitRateViewShowing
+        // 显示码率
+        self.setBitRateButton(titleLevel: Int(self.currentLevel().rawValue))
+        // 本地视频不允许切换码率
+        self.videoControl.bitRateButton.isEnabled = self.isExistedTheLocalVideo(self.vid) == 0
+    }
+    // 视频显示信息改变
+    func onMPMoviePlayerReadyForDisplayDidChangeNotification() {
+        
+    }
+    // 播放状态改变
+    func onMPMoviePlayerPlaybackStateDidChangeNotification() {
+        self.syncPlayButtonState()
+        if self.playbackState == .playing {
+            self.videoControl.indicatorView.stopAnimating()
+            self.startDurationTimer()
+            self.startBufferTimer()
+            self.videoControl.autoFadeOutControlBar()
+        } else {
+            self.stopDurationTimer()
+            if self.playbackState == .stopped {
+                self.videoControl.animateShow()
+            }
+        }
+    }
+    // TODO: 网络加载状态改变
+    func onMPMoviePlayerLoadStateDidChangeNotification() {
+        self.syncPlayButtonState()
+        
+        if (self.loadState.rawValue & MPMovieLoadState.stalled.rawValue) == 1 {
+            self.videoControl.indicatorView.startAnimating()
+        }
+//        if self.loadState.rawValue & MPMovieLoadState.playthroughOK.rawValue
+    }
+    // 做好播放准备后
+    func onMediaPlaybackIsPrearedToPlayDidChangeNotification() {
+        if self.watchStartTime > 0 && self.watchStartTime < self.duration {
+            self.currentPlaybackTime = self.watchStartTime
+            self.timeLabel = self.getTimeLabelString(withCurrentTime: self.watchStartTime, totalTime: self.duration)
+            self.watchStartTime = -1
+            self.isSwitching = false
+        }
+    }
+    // 播放完成或退出
+    func onMPMoviePlayerPlaybackDidFinishNotification(_ notification:Notification) {
+        self.videoControl.indicatorView.stopAnimating()
+        
+        if self.autoContinue {
+            var autoContinueDict:[String:Any] = UserDefaults.standard.dictionary(forKey: USER_DICT_AUTOCONTINUE) ?? [:]
+            autoContinueDict[self.vid] = self.currentTime
+            UserDefaults.standard.set(autoContinueDict, forKey: USER_DICT_AUTOCONTINUE)
+            UserDefaults.standard.synchronize()
+        }
+        let notificationUserInfo = notification.userInfo
+        let resultValue = notificationUserInfo?[MPMoviePlayerPlaybackDidFinishReasonUserInfoKey]
+        let reason = (resultValue as! MPMovieFinishReason)
+        if fabs(self.duration - self.currentPlaybackTime) < 1 {
+            self.videoControl.slider.progressValue = CGFloat(self.duration)
+            let total = floor(self.duration)
+            self.timeLabel = self.getTimeLabelString(withCurrentTime: total, totalTime: total)
+            self.isWatchCompleted = true
+            
+            // 播放结束清除续播记录
+            var autoContinueDict:[String:Any] = UserDefaults.standard.dictionary(forKey: USER_DICT_AUTOCONTINUE) ?? [:]
+            if autoContinueDict.count > 0 && !self.vid.isEmpty {
+                autoContinueDict.removeValue(forKey: self.vid)
+                UserDefaults.standard.set(autoContinueDict, forKey: USER_DICT_AUTOCONTINUE)
+                UserDefaults.standard.synchronize()
+            }
+            self.watchCompletedBlock()
+        }
+        if reason == .playbackError {
+            let mediaPlayerError = notificationUserInfo?["error"]
+            
+            var errorString = ""
+            if let e = mediaPlayerError as? Error {
+                errorString = "\(e.localizedDescription)"
+            } else {
+                errorString = "playback failed without any given reason"
+            }
+            PvReportManager.reportError(super.pid, uid: PolyvUserId, vid: self.vid, error: errorString, param1: self.param1, param2: "", param3: "", param4: "", param5: "polyv-ios-sdk")
+        }
+    }
+    func onMPMovieDurationAvailableNotification() {
+        self.setProgressSliderMaxMinValues()
     }
     // MARK:   处理字幕
     func searchSubtitles() {
@@ -381,7 +653,24 @@ extension SkinVideoViewController {
         
         return "\(timeElapsed)/\(timeRemaining)"
     }
-    
+    // MARK: - 定时器
+    func startDurationTimer() {
+        self.durationTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(monitorVideoPlayback), userInfo: nil, repeats: true)
+        RunLoop.current.add(self.durationTimer, forMode: .defaultRunLoopMode)
+    }
+    func stopDurationTimer() {
+        self.durationTimer.invalidate()
+    }
+    func startBufferTimer() {
+        // FIX: 确保在同一对象下只被创建一次，否则可能造成内存泄漏的问题(其他如startDurationTimer方法中可参考修改，介于可能影响其他代码的可能性先不做修改)
+        if self.bufferTimer == nil {
+            self.bufferTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(trackBuffer), userInfo: nil, repeats: true)
+            RunLoop.current.add(self.bufferTimer, forMode: .defaultRunLoopMode)
+        }
+    }
+    func stopBufferTimer() {
+        self.bufferTimer.invalidate()
+    }
     // MARK: - 定时器事件
     func monitorVideoPlayback() {
 //        if self.isseek {}
@@ -391,6 +680,33 @@ extension SkinVideoViewController {
         self.timeLabel = self.getTimeLabelString(withCurrentTime: currentTime, totalTime: totalTime)
         self.videoControl.slider.progressValue = ceil(CGFloat(currentTime))
         
+        self.searchSubtitles()
+        if self.danmuEnabled {danmuManager.rollDanmu(currentTime)}
+        let userDefaults = UserDefaults.standard
+        
+        if self.enableExam {
+            var examShouldShow:PvExam?
+            for exam in self.videoExams! as! [PvExam] {
+                if Double(exam.seconds) < currentTime && !(userDefaults.string(forKey: "exam_\(exam.examId)") == "Y") {
+                    examShouldShow = exam
+                    break
+                }
+            }
+            if let e = examShouldShow {
+                self.pause()
+                self.show(exam: e)
+            }
+        }
+        
+    }
+    func trackBuffer() {
+        let buffer = CGFloat(self.playableDuration/self.duration)
+        if !buffer.isNaN {
+            self.videoControl.slider.loadValue = buffer
+        }
+    }
+    func fadeDismissControl() {
+        self.videoControl.animateHide()
     }
 }
 
@@ -400,7 +716,7 @@ extension SkinVideoViewController:PLVMoviePlayerDelegate {
         // 码率列表
         if let buttons = self.videoControl.createBitRateButton(super.getLevel()) {
             for button in buttons {
-                (button as! UIButton).addTarget(self, action: #selector(bitRateViewButtonClick), for: .touchUpInside)
+                (button as! UIButton).addTarget(self, action: #selector(bitRateViewClick(_:)), for: .touchUpInside)
             }
         }
         // 问答
@@ -576,7 +892,7 @@ extension SkinVideoViewController:RotateFullScreen {
             })
             
         } else {
-            self.danmuSendView = backAction()
+            self.danmuSendView?.backAction()
             if self.keepNavigationBar {
                 self.navigationController?.setNavigationBarHidden(false, animated: true)
                 self.videoControl.backButton.isHidden = true

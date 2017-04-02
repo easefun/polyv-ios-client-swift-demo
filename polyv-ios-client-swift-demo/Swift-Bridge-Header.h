@@ -11,4 +11,6 @@
 #import "PLVData.h"
 #import "PLVResumableUpload.h"
 #import "SkinVideoViewControllerView.h"
+#import "PvReportManager.h"
+
 
