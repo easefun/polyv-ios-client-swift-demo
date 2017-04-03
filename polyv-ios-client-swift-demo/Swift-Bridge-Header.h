@@ -1,6 +1,5 @@
 #import "PolyvSettings.h"
 #import "PolyvUtil.h"
-//#import "SkinVideoViewController.h"
 #import "PLVMoviePlayerController.h"
 #import "FMDatabase.h"
 #import "FMDatabaseQueue.h"
@@ -10,7 +9,7 @@
 #import "PVDanmuManager.h"
 #import "PLVData.h"
 #import "PLVResumableUpload.h"
-#import "SkinVideoViewControllerView.h"
 #import "PvReportManager.h"
-
-
+#import "PvExamView.h"
+#import "PLVSlider.h"
+#import "PLVIndicator.h"

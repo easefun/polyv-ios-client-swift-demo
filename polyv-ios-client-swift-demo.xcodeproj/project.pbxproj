@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C563C6C38B66954E4E740E7F /* SkinVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C563C139C97150EC4444ECCE /* SkinVideoView.swift */; };
 		E9161F131E8E206200F497D8 /* PolyvPlayerDemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91E4BD91E8D586C007A8D83 /* PolyvPlayerDemoViewController.swift */; };
 		E9161F151E8E6BBF00F497D8 /* SkinVideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9161F141E8E6BBF00F497D8 /* SkinVideoViewController.swift */; };
 		E9161F171E8E8A4D00F497D8 /* SkinVideoProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9161F161E8E8A4D00F497D8 /* SkinVideoProtocols.swift */; };
@@ -29,9 +30,6 @@
 		E91E4B6E1E8D155F007A8D83 /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = E91E4B691E8D155F007A8D83 /* FMResultSet.m */; };
 		E91E4B781E8D15BF007A8D83 /* PLVIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = E91E4B731E8D15BF007A8D83 /* PLVIndicator.m */; };
 		E91E4B791E8D15BF007A8D83 /* PLVSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = E91E4B751E8D15BF007A8D83 /* PLVSlider.m */; };
-		E91E4B7A1E8D15BF007A8D83 /* SubTitleLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = E91E4B771E8D15BF007A8D83 /* SubTitleLabel.m */; };
-		E91E4B801E8D15F4007A8D83 /* SkinVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E91E4B7D1E8D15F4007A8D83 /* SkinVideoViewController.m */; };
-		E91E4B811E8D15F4007A8D83 /* SkinVideoViewControllerView.m in Sources */ = {isa = PBXBuildFile; fileRef = E91E4B7F1E8D15F4007A8D83 /* SkinVideoViewControllerView.m */; };
 		E91E4B871E8D166C007A8D83 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E91E4B861E8D166C007A8D83 /* libresolv.tbd */; };
 		E91E4B891E8D1675007A8D83 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E91E4B881E8D1675007A8D83 /* CoreTelephony.framework */; };
 		E91E4B8B1E8D167E007A8D83 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E91E4B8A1E8D167E007A8D83 /* SystemConfiguration.framework */; };
@@ -74,9 +72,11 @@
 		E91E4BD71E8D5015007A8D83 /* video.png in Resources */ = {isa = PBXBuildFile; fileRef = E91E4BD41E8D5015007A8D83 /* video.png */; };
 		E91E4BD81E8D5015007A8D83 /* video-play.png in Resources */ = {isa = PBXBuildFile; fileRef = E91E4BD51E8D5015007A8D83 /* video-play.png */; };
 		E91E4BDC1E8D6847007A8D83 /* UploadDemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91E4BDB1E8D6847007A8D83 /* UploadDemoViewController.swift */; };
+		E989951C1E927754007D0759 /* SubTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E989951B1E927754007D0759 /* SubTitleLabel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C563C139C97150EC4444ECCE /* SkinVideoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SkinVideoView.swift; sourceTree = "<group>"; };
 		E9161F141E8E6BBF00F497D8 /* SkinVideoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SkinVideoViewController.swift; sourceTree = "<group>"; };
 		E9161F161E8E8A4D00F497D8 /* SkinVideoProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SkinVideoProtocols.swift; sourceTree = "<group>"; };
 		E91E4B211E8D11C8007A8D83 /* polyv-ios-client-swift-demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "polyv-ios-client-swift-demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -128,12 +128,6 @@
 		E91E4B731E8D15BF007A8D83 /* PLVIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PLVIndicator.m; path = polyvClasses/PLVIndicator.m; sourceTree = "<group>"; };
 		E91E4B741E8D15BF007A8D83 /* PLVSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PLVSlider.h; path = polyvClasses/PLVSlider.h; sourceTree = "<group>"; };
 		E91E4B751E8D15BF007A8D83 /* PLVSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PLVSlider.m; path = polyvClasses/PLVSlider.m; sourceTree = "<group>"; };
-		E91E4B761E8D15BF007A8D83 /* SubTitleLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SubTitleLabel.h; path = polyvClasses/SubTitleLabel.h; sourceTree = "<group>"; };
-		E91E4B771E8D15BF007A8D83 /* SubTitleLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SubTitleLabel.m; path = polyvClasses/SubTitleLabel.m; sourceTree = "<group>"; };
-		E91E4B7C1E8D15F4007A8D83 /* SkinVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkinVideoViewController.h; path = polyvClasses/SkinPlayer/SkinVideoViewController.h; sourceTree = "<group>"; };
-		E91E4B7D1E8D15F4007A8D83 /* SkinVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SkinVideoViewController.m; path = polyvClasses/SkinPlayer/SkinVideoViewController.m; sourceTree = "<group>"; };
-		E91E4B7E1E8D15F4007A8D83 /* SkinVideoViewControllerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkinVideoViewControllerView.h; path = polyvClasses/SkinPlayer/SkinVideoViewControllerView.h; sourceTree = "<group>"; };
-		E91E4B7F1E8D15F4007A8D83 /* SkinVideoViewControllerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SkinVideoViewControllerView.m; path = polyvClasses/SkinPlayer/SkinVideoViewControllerView.m; sourceTree = "<group>"; };
 		E91E4B861E8D166C007A8D83 /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		E91E4B881E8D1675007A8D83 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		E91E4B8A1E8D167E007A8D83 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -177,6 +171,7 @@
 		E91E4BD51E8D5015007A8D83 /* video-play.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "video-play.png"; sourceTree = "<group>"; };
 		E91E4BD91E8D586C007A8D83 /* PolyvPlayerDemoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PolyvPlayerDemoViewController.swift; sourceTree = "<group>"; };
 		E91E4BDB1E8D6847007A8D83 /* UploadDemoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadDemoViewController.swift; sourceTree = "<group>"; };
+		E989951B1E927754007D0759 /* SubTitleLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubTitleLabel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -281,8 +276,7 @@
 				E91E4B731E8D15BF007A8D83 /* PLVIndicator.m */,
 				E91E4B741E8D15BF007A8D83 /* PLVSlider.h */,
 				E91E4B751E8D15BF007A8D83 /* PLVSlider.m */,
-				E91E4B761E8D15BF007A8D83 /* SubTitleLabel.h */,
-				E91E4B771E8D15BF007A8D83 /* SubTitleLabel.m */,
+				E989951B1E927754007D0759 /* SubTitleLabel.swift */,
 				E91E4B941E8D176D007A8D83 /* Video.swift */,
 			);
 			name = polyvClasses;
@@ -309,12 +303,9 @@
 		E91E4B7B1E8D15D6007A8D83 /* SkinPlayer */ = {
 			isa = PBXGroup;
 			children = (
-				E91E4B7C1E8D15F4007A8D83 /* SkinVideoViewController.h */,
-				E91E4B7D1E8D15F4007A8D83 /* SkinVideoViewController.m */,
-				E91E4B7E1E8D15F4007A8D83 /* SkinVideoViewControllerView.h */,
-				E91E4B7F1E8D15F4007A8D83 /* SkinVideoViewControllerView.m */,
 				E9161F141E8E6BBF00F497D8 /* SkinVideoViewController.swift */,
 				E9161F161E8E8A4D00F497D8 /* SkinVideoProtocols.swift */,
+				C563C139C97150EC4444ECCE /* SkinVideoView.swift */,
 			);
 			name = SkinPlayer;
 			sourceTree = "<group>";
@@ -488,15 +479,14 @@
 				E91E4B6D1E8D155F007A8D83 /* FMDatabaseQueue.m in Sources */,
 				E91E4B251E8D11C8007A8D83 /* AppDelegate.swift in Sources */,
 				E91E4B3C1E8D12CF007A8D83 /* VideoListController.swift in Sources */,
-				E91E4B7A1E8D15BF007A8D83 /* SubTitleLabel.m in Sources */,
 				E9161F151E8E6BBF00F497D8 /* SkinVideoViewController.swift in Sources */,
 				E91E4B991E8D23DF007A8D83 /* DownloadListController.swift in Sources */,
 				E91E4B6E1E8D155F007A8D83 /* FMResultSet.m in Sources */,
 				E91E4B401E8D12DC007A8D83 /* DetailViewWithNavigationController.swift in Sources */,
+				E989951C1E927754007D0759 /* SubTitleLabel.swift in Sources */,
 				E91E4B951E8D176D007A8D83 /* Video.swift in Sources */,
 				E91E4B6B1E8D155F007A8D83 /* FMDatabaseAdditions.m in Sources */,
-				E91E4B811E8D15F4007A8D83 /* SkinVideoViewControllerView.m in Sources */,
-				E91E4B801E8D15F4007A8D83 /* SkinVideoViewController.m in Sources */,
+				C563C6C38B66954E4E740E7F /* SkinVideoView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

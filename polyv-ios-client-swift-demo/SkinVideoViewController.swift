@@ -80,26 +80,9 @@ class SkinVideoViewController:PLVMoviePlayerController {
             videoControl.enableSnapshot = enableSnapshot
         }
     }
-    fileprivate var volumeSlider:UISlider?
+    fileprivate var volumeSlider:UISlider!
     /// 播放控制视图
-    fileprivate (set) lazy var videoControl:SkinVideoViewControllerView = {
-        let v = SkinVideoViewControllerView()
-        let volumeView = MPVolumeView()
-        volumeView.showsRouteButton = false
-        volumeView.showsVolumeSlider = true
-        volumeView.sizeToFit()
-        volumeView.frame = CGRect(x: -1000, y: -1000, width: 10, height: 10)
-        v.translatesAutoresizingMaskIntoConstraints = true
-        v.addSubview(volumeView)
-//        volumeView.userActivity
-        for view in volumeView.subviews {
-            if let slider = view as? UISlider {
-                self.volumeSlider = slider
-                break
-            }
-        }
-        return v
-    }()
+    fileprivate (set) var videoControl:SkinVideoView!
     
     fileprivate (set) lazy var movieBackgroundView:UIView = {
        let v = UIView()
@@ -127,24 +110,24 @@ class SkinVideoViewController:PLVMoviePlayerController {
                 var frame = self.view.frame
                 frame = CGRect(x: frame.origin.x, y: frame.origin.y - 20, width: frame.size.width, height: frame.size.height)
                 self.view.frame = frame
-                self.orifinFrame = frame
+                self.originFrame = frame
                 self.navigationController?.setNavigationBarHidden(true, animated: true)
                 self.videoControl.backButton.isHidden = true
             }
         }
     }
     var isBitRateViewShowing = false
-    var orifinFrame:CGRect!
+    var originFrame:CGRect!
     
     var durationTimer:Timer!
     var bufferTimer:Timer!
     /// 启用弹幕
-    var danmuEnabled = true {
+    var danmuEnabled = false {
         didSet {
             let dmFrame = self.view.bounds
             self.danmuManager = PVDanmuManager(frame: dmFrame, withVid: self.vid, in: self.view, underView: self.videoControl, durationTime: 1)
             let color = danmuEnabled ? UIColor.yellow : UIColor.white
-            self.videoControl.setDanmuButtonColor(color)
+            self.videoControl.setDanmuButton(color:color)
         }
     }
     fileprivate var danmuManager:PVDanmuManager!
@@ -152,7 +135,7 @@ class SkinVideoViewController:PLVMoviePlayerController {
     /// 设置播放器标题
     var headTitle = "" {
         didSet {
-            self.videoControl.setHeadTitle(headTitle)
+            self.videoControl.headTitle = headTitle
         }
     }
     var teaserURL = ""
@@ -192,13 +175,35 @@ class SkinVideoViewController:PLVMoviePlayerController {
     deinit {
         LogPrint("deinit!")
     }
-    init(frame:CGRect, vid:String = "", level:PvLevel = .auto) {
+    override init!(contentURL url: URL!) {
+        super.init(contentURL: url)
+    }
+    init(frame:CGRect, vid:String = "sl8da4jjbxe69c6942a7a737819660de_s", level:PvLevel = .auto) {
         super.init(vid: vid, level: level)
+//        super.init()
+//        super.init
         let f = CGRect(x:frame.origin.x , y: frame.origin.y+20, width: frame.size.width, height: frame.size.height)
+        videoControl = SkinVideoView(frame:f)
+        videoControl.backgroundColor = UIColor.clear
+        self.backgroundView?.backgroundColor = UIColor.clear
+        let volumeView = MPVolumeView()
+        volumeView.showsRouteButton = false
+        volumeView.showsVolumeSlider = true
+        volumeView.sizeToFit()
+        volumeView.frame = CGRect(x: -1000, y: -1000, width: 10, height: 10)
+        videoControl.translatesAutoresizingMaskIntoConstraints = true
+        videoControl.addSubview(volumeView)
+        //        volumeView.userActivity
+        for view in volumeView.subviews {
+            if let slider = view as? UISlider {
+                self.volumeSlider = slider
+                break
+            }
+        }
+        
         self.frame = f
-        self.orifinFrame = frame
+        self.originFrame = frame
         self.view.addSubview(videoControl)
-        self.videoControl.frame = self.view.bounds
         
         self.view.backgroundColor = UIColor.black
         self.controlStyle = .none
@@ -274,7 +279,7 @@ extension SkinVideoViewController {
         self.cancelObserver()
         self.stopBufferTimer()
         self.stopDurationTimer()
-        self.stallTimer.invalidate()
+        self.stallTimer?.invalidate()
     }
     /// 销毁，在导航控制器中不会执行
     func dismiss() {
@@ -462,13 +467,26 @@ extension SkinVideoViewController {
             }
         }
     }
-    // TODO: 网络加载状态改变
+    // FIXME: 网络加载状态改变
     func onMPMoviePlayerLoadStateDidChangeNotification() {
         self.syncPlayButtonState()
         
-        if (self.loadState.rawValue & MPMovieLoadState.stalled.rawValue) == 1 {
-            self.videoControl.indicatorView.startAnimating()
+        if loadState == .stalled {
+            videoControl.indicatorView.startAnimating()
         }
+        if loadState == .playthroughOK {
+            videoControl.indicatorView.stopAnimating()
+            isPrepared = true
+        } else {
+            
+        }
+        if loadState == .playable {
+            
+        }
+        
+//        if (self.loadState.rawValue & MPMovieLoadState.stalled.rawValue) == 1 {
+//            self.videoControl.indicatorView.startAnimating()
+//        }
 //        if self.loadState.rawValue & MPMovieLoadState.playthroughOK.rawValue
     }
     // 做好播放准备后
@@ -492,7 +510,7 @@ extension SkinVideoViewController {
         }
         let notificationUserInfo = notification.userInfo
         let resultValue = notificationUserInfo?[MPMoviePlayerPlaybackDidFinishReasonUserInfoKey]
-        let reason = (resultValue as! MPMovieFinishReason)
+        
         if fabs(self.duration - self.currentPlaybackTime) < 1 {
             self.videoControl.slider.progressValue = CGFloat(self.duration)
             let total = floor(self.duration)
@@ -508,17 +526,20 @@ extension SkinVideoViewController {
             }
             self.watchCompletedBlock()
         }
-        if reason == .playbackError {
-            let mediaPlayerError = notificationUserInfo?["error"]
-            
-            var errorString = ""
-            if let e = mediaPlayerError as? Error {
-                errorString = "\(e.localizedDescription)"
-            } else {
-                errorString = "playback failed without any given reason"
+        if let reason = resultValue as? MPMovieFinishReason {
+            if reason == .playbackError {
+                let mediaPlayerError = notificationUserInfo?["error"]
+                
+                var errorString = ""
+                if let e = mediaPlayerError as? Error {
+                    errorString = "\(e.localizedDescription)"
+                } else {
+                    errorString = "playback failed without any given reason"
+                }
+                PvReportManager.reportError(super.pid, uid: PolyvUserId, vid: self.vid, error: errorString, param1: self.param1, param2: "", param3: "", param4: "", param5: "polyv-ios-sdk")
             }
-            PvReportManager.reportError(super.pid, uid: PolyvUserId, vid: self.vid, error: errorString, param1: self.param1, param2: "", param3: "", param4: "", param5: "polyv-ios-sdk")
         }
+        
     }
     func onMPMovieDurationAvailableNotification() {
         self.setProgressSliderMaxMinValues()
@@ -542,7 +563,8 @@ extension SkinVideoViewController {
     func parseSubRip () {
         self.parsedSrt = NSMutableDictionary()
         var val = ""
-        let values = self.video.videoSrts.values
+       
+        guard let values = self.video.videoSrts?.values else {return}
         if values.count != 0 {val = values.first!}//暂时只选择第一条字幕
         if val.isEmpty {return}
         guard var s = try? String(contentsOf: URL(string: val)!, encoding: .utf8 ) else  {
@@ -550,6 +572,8 @@ extension SkinVideoViewController {
         }
         s = s.replacingOccurrences(of: "\n\r\n", with: "\n\n")
         s = s.replacingOccurrences(of: "\n\n\n", with: "\n\n")
+        return
+        print(s)
         let scanner = Scanner(string: s)
         while !scanner.isAtEnd {
             autoreleasepool {
@@ -591,12 +615,12 @@ extension SkinVideoViewController {
                 scanner.scanString("\n\n", into: &textString)
                 
                 textString?.replacingOccurrences(of: "\r\n", with: " ")
-                textString = textString!.trimmingCharacters(in: .whitespaces) as NSString
+                textString = textString?.trimmingCharacters(in: .whitespaces) as NSString?
                 
                 let dictionary = NSMutableDictionary()
                 dictionary.setObject(fromTime, forKey: "from" as NSCopying)
                 dictionary.setObject(endTime, forKey: "to" as NSCopying)
-                dictionary.setObject(textString!, forKey: "text" as NSCopying)
+                dictionary.setObject(textString as Any, forKey: "text" as NSCopying)
                 
                 self.parsedSrt?.setValue(dictionary, forKey: indexString! as String)
             }
@@ -659,7 +683,7 @@ extension SkinVideoViewController {
         RunLoop.current.add(self.durationTimer, forMode: .defaultRunLoopMode)
     }
     func stopDurationTimer() {
-        self.durationTimer.invalidate()
+        self.durationTimer?.invalidate()
     }
     func startBufferTimer() {
         // FIX: 确保在同一对象下只被创建一次，否则可能造成内存泄漏的问题(其他如startDurationTimer方法中可参考修改，介于可能影响其他代码的可能性先不做修改)
@@ -669,7 +693,7 @@ extension SkinVideoViewController {
         }
     }
     func stopBufferTimer() {
-        self.bufferTimer.invalidate()
+        self.bufferTimer?.invalidate()
     }
     // MARK: - 定时器事件
     func monitorVideoPlayback() {
@@ -714,11 +738,11 @@ extension SkinVideoViewController {
 extension SkinVideoViewController:PLVMoviePlayerDelegate {
     func moviePlayer(_ player: PLVMoviePlayerController!, didLoadVideoInfo video: PvVideo!) {
         // 码率列表
-        if let buttons = self.videoControl.createBitRateButton(super.getLevel()) {
-            for button in buttons {
-                (button as! UIButton).addTarget(self, action: #selector(bitRateViewClick(_:)), for: .touchUpInside)
-            }
+        let buttons = self.videoControl.createBitRateButton(Int(super.getLevel())) 
+        for button in buttons {
+            button.addTarget(self, action: #selector(bitRateViewClick(_:)), for: .touchUpInside)
         }
+        
         // 问答
 //        self.enableExam = self.enableExam
 
@@ -856,7 +880,7 @@ extension SkinVideoViewController:RotateFullScreen {
             let frame = UIScreen.main.bounds
             self.frame = frame
             self.isFullscreenMode = true
-            self.videoControl.changeToFullsreen()
+            self.videoControl.changeToFullscreen()
             if keepNavigationBar {
                 navigationController?.setToolbarHidden(true, animated: true)
                 self.videoControl.backButton.isHidden = false
@@ -883,7 +907,7 @@ extension SkinVideoViewController:RotateFullScreen {
         if self.videoControl.showInWindowMode {
             UIView.animate(withDuration: pPlayerAnimationTimeinterval, animations: { 
                 self.view.transform = CGAffineTransform.identity
-                self.frame = self.orifinFrame
+                self.frame = self.originFrame
                 UIApplication.shared.isStatusBarHidden = false
             }, completion:{ _ in
                 self.isFullscreenMode = false
@@ -903,9 +927,9 @@ extension SkinVideoViewController:RotateFullScreen {
                 
             }
             
-            self.frame = self.orifinFrame
+            self.frame = self.originFrame
             self.isFullscreenMode = false
-            self.videoControl.changeToSmallsreen()
+            self.videoControl.changeToSmallscreen()
             self.videoControl.fullScreenButton.isHidden = false
             self.videoControl.shrinkScreenButton.isHidden = true
             self.danmuManager?.resetDanmu(withFrame: self.view.frame)
@@ -964,7 +988,7 @@ extension SkinVideoViewController:Gesture {
     ///MARK: - pan垂直移动的方法
     func vertical(pan:CGFloat) {
         if self.volumeEnable {
-            volumeSlider?.value -= Float(pan) / 10000
+            volumeSlider.value -= Float(pan) / 10000
         } else {
             UIScreen.main.brightness -= pan / 10000
         }

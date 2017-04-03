@@ -52,7 +52,8 @@ class DetailViewWithNavigationController:UIViewController {
         
 //        videoPlayer.teaserEnable = true
         // 开启弹幕
-        videoPlayer.danmuEnabled = true
+        // FIXME: enable Danmu will cause weird memory consume
+//        videoPlayer.danmuEnabled = true
         // 是否开启截图
         videoPlayer.enableSnapshot = true
         
