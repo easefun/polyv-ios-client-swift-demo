@@ -236,7 +236,7 @@
                                     <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                                 <connections>
-                                    <segue destination="Oua-mt-zte" kind="modal" id="psQ-q2-6zN"/>
+                                    <segue destination="Oua-mt-zte" kind="show" id="zVO-jt-Y9T"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LIL-Je-32j">
@@ -513,24 +513,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SC1-O0-Q3o" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2580" y="146"/>
-        </scene>
-        <!--Polyv Player Demo View Controller-->
-        <scene sceneID="RNr-cf-nPX">
-            <objects>
-                <viewController id="S7V-sc-ftU" customClass="PolyvPlayerDemoViewController" customModule="polyv_ios_client_swift_demo" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="jmS-9v-Vrd"/>
-                        <viewControllerLayoutGuide type="bottom" id="PjT-aE-MWB"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="vMj-OU-Sqb">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="vo5-ep-MZk" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3316" y="145"/>
         </scene>
         <!--上传-->
         <scene sceneID="g9v-yY-jbv">
