@@ -23,6 +23,18 @@ class Video {
     var percent = 0.0///下载进度，百分比
     var rate = 0///下载速率，单位kb/s
     
+    init(withJSON item:[String:Any]) {
+        
+            title = item["title"] as! String
+            desc = item["context"] as! String
+            vid = item["vid"] as! String
+            duration = item["duration"] as! String
+            piclink = (item["first_image"] as! String).replacingOccurrences(of: "http://", with: "https://")
+            //                        video.df = item["df"] as! Int32
+            seed = item["seed"] as! Int
+            allfilesize = item["filesize"] as! [Int64]
+    }
+    
     init?(withVid:String) {
         if let item = PolyvSettings.loadVideoJson(withVid) {
             self.title = item ["title"] as! String
@@ -35,9 +47,5 @@ class Video {
             self.vid = withVid
         }
     }
-    init() {
-        
-    }
-    
 
 }
