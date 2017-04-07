@@ -47,5 +47,7 @@ class Video {
             self.vid = withVid
         }
     }
-
+    init() {
+        
+    }
 }
