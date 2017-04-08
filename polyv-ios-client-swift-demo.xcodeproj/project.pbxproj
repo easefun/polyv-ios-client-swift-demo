@@ -72,6 +72,7 @@
 		E989959E1E9389B5007D0759 /* polyvSDKExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E989959C1E938819007D0759 /* polyvSDKExtension.swift */; };
 		E989959F1E9389B5007D0759 /* FMDBHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98995981E9387FA007D0759 /* FMDBHelper.swift */; };
 		E98995A01E9389B5007D0759 /* Video.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98995991E9387FA007D0759 /* Video.swift */; };
+		E9BD69331E994F44001FD50B /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BD69321E994F44001FD50B /* RootViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -173,6 +174,7 @@
 		E98995981E9387FA007D0759 /* FMDBHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FMDBHelper.swift; path = polyvClasses/FMDBHelper.swift; sourceTree = "<group>"; };
 		E98995991E9387FA007D0759 /* Video.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Video.swift; path = polyvClasses/Video.swift; sourceTree = "<group>"; };
 		E989959C1E938819007D0759 /* polyvSDKExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = polyvSDKExtension.swift; path = polyvClasses/polyvSDKExtension.swift; sourceTree = "<group>"; };
+		E9BD69321E994F44001FD50B /* RootViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -232,6 +234,7 @@
 				E91E4B301E8D11C8007A8D83 /* Info.plist */,
 				E91E4B381E8D12C2007A8D83 /* Swift-Bridge-Header.h */,
 				E91E4BDB1E8D6847007A8D83 /* UploadDemoViewController.swift */,
+				E9BD69321E994F44001FD50B /* RootViewController.swift */,
 			);
 			path = "polyv-ios-client-swift-demo";
 			sourceTree = "<group>";
@@ -486,6 +489,7 @@
 				E91E4B991E8D23DF007A8D83 /* DownloadListController.swift in Sources */,
 				E91E4B6E1E8D155F007A8D83 /* FMResultSet.m in Sources */,
 				E91E4B401E8D12DC007A8D83 /* DetailViewWithNavigationController.swift in Sources */,
+				E9BD69331E994F44001FD50B /* RootViewController.swift in Sources */,
 				E91E4B6B1E8D155F007A8D83 /* FMDatabaseAdditions.m in Sources */,
 				E91E4B811E8D15F4007A8D83 /* SkinVideoViewControllerView.m in Sources */,
 				E91E4B801E8D15F4007A8D83 /* SkinVideoViewController.m in Sources */,
