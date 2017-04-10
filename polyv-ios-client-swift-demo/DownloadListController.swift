@@ -14,19 +14,19 @@ class DownloadListController:UITableViewController {
     var btnStart:UIBarButtonItem!
     var started = false
     var currentVid = ""
-    lazy var videoPlayer:SkinVideoViewController = {
-        let width = UIScreen.main.bounds.size.width
-        let rect = CGRect(x: 0, y: 0, width: width, height: width*(9.0/16.0))
-        let v = SkinVideoViewController(frame: rect)
-        v?.configObserver()
-        v?.dimissCompleteBlock = {
-            v?.stop()
-            v?.cancel()
-//            v?.cancelObserver()
-            
-        }
-        return v!
-    }()
+//    lazy var videoPlayer:SkinVideoViewController = {
+//        let width = UIScreen.main.bounds.size.width
+//        let rect = CGRect(x: 0, y: 0, width: width, height: width*(9.0/16.0))
+//        let v = SkinVideoViewController(frame: rect)
+//        v?.configObserver()
+//        v?.dimissCompleteBlock = {
+//            v?.stop()
+//            v?.cancel()
+////            v?.cancelObserver()
+//            
+//        }
+//        return v!
+//    }()
     
     override func viewDidAppear(_ animated: Bool) {
         
@@ -200,6 +200,7 @@ extension DownloadListController {
             downloaderDictionary.removeValue(forKey: video.vid)
         }
         PvUrlSessionDownload.deleteVideo(video.vid, level: Int32(video.level))
+        FMDBHelper.shared.removeDownload(video: video)
         tableView.reloadData()
         
     }
