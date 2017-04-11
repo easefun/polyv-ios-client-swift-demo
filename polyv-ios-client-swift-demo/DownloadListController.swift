@@ -55,7 +55,9 @@ class DownloadListController:UITableViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(handleBackgroundSession), name: NSNotification.Name(rawValue: PLVBackgroundSessionUpdateNotification), object: nil)
         super.viewDidLoad()
     }
-    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
     func startAll() {
         if started {
             for item in downloaderDictionary {
