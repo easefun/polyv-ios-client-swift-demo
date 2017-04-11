@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         // Override point for customization after application launch.
         //download dir
-        PolyvSettings.shared().downloadDir = NSHomeDirectory().appending("Documents/plvideo/a")
+        PolyvSettings.shared().downloadDir = NSHomeDirectory().appending("/Documents/plvideo/a")
         PolyvSettings.shared().logLevel = .all
         PolyvSettings.shared().httpDNSEnable = true
         

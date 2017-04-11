@@ -14,13 +14,14 @@ class FMDBHelper {
     static let shared = FMDBHelper()
     private init () {
         DBName = get(path: "polyv.db")
+        print(DBName)
         readyDownloadTable()
     }
     // 数据库存储路径(内部使用)
     func get(path dbNme:String) ->String {
         let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
         let documentsDirectory = path[0]
-        return documentsDirectory.appending(dbNme)
+        return documentsDirectory.appending("/"+dbNme)
     }
     //打开数据库
     func readyDatabase() {
