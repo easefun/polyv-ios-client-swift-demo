@@ -90,7 +90,7 @@ class VideoListController:UITableViewController,UIAlertViewDelegate {
         }
     }
     func alertView(_ alertView: UIAlertView, willDismissWithButtonIndex buttonIndex: Int) {
-        guard buttonIndex > 0, buttonIndex < 3 else {return}
+        guard buttonIndex > 0, buttonIndex <= 3 else {return}
         video.level = buttonIndex
         video.filesize = video.allfilesize[buttonIndex-1]
         fmdbHelper.addDownload(video: video)
