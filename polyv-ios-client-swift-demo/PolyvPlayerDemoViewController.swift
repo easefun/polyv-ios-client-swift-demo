@@ -20,7 +20,7 @@ class PolyvPlayerDemoViewController:UIViewController {
     
     override func viewDidLoad() {
         // 配置下载器
-        downloader = PvUrlSessionDownload(vid: vid, level: 1)
+        downloader = PvUrlSessionDownload(vid: vid, level: .standard)
         // 自动选择码率
         videoPlayer = PLVMoviePlayerController(vid: vid)
         self.view.addSubview(videoPlayer.view)

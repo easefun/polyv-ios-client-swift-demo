@@ -35,7 +35,7 @@ class DownloadListController:UITableViewController {
         for video in videoList {
             //只加入新增下载任务
             if !downloaderDictionary.keys.contains(video.vid) {
-                let downloader = PvUrlSessionDownload(vid: video.vid, level: Int32(video.level))
+                let downloader = PvUrlSessionDownload(vid: video.vid, level: PvLevel(rawValue: Int32(video.level))!)
                 //设置下载代理为自身，需要实现四个代理方法download delegate
                 downloader?.setDownloadDelegate(self)
                 downloaderDictionary[video.vid] = downloader
