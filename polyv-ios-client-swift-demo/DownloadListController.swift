@@ -14,19 +14,19 @@ class DownloadListController:UITableViewController {
     var btnStart:UIBarButtonItem!
     var started = false
     var currentVid = ""
-    lazy var videoPlayer:SkinVideoViewController = {
-        let width = UIScreen.main.bounds.size.width
-        let rect = CGRect(x: 0, y: 0, width: width, height: width*(9.0/16.0))
-        let v = SkinVideoViewController(frame: rect)
-        v?.configObserver()
-        v?.dimissCompleteBlock = {
-            v?.stop()
-            v?.cancel()
-//            v?.cancelObserver()
-            
-        }
-        return v!
-    }()
+//    lazy var videoPlayer:SkinVideoViewController = {
+//        let width = UIScreen.main.bounds.size.width
+//        let rect = CGRect(x: 0, y: 0, width: width, height: width*(9.0/16.0))
+//        let v = SkinVideoViewController(frame: rect)
+//        v?.configObserver()
+//        v?.dimissCompleteBlock = {
+//            v?.stop()
+//            v?.cancel()
+////            v?.cancelObserver()
+//            
+//        }
+//        return v!
+//    }()
     
     override func viewDidAppear(_ animated: Bool) {
         
@@ -35,7 +35,7 @@ class DownloadListController:UITableViewController {
         for video in videoList {
             //只加入新增下载任务
             if !downloaderDictionary.keys.contains(video.vid) {
-                let downloader = PvUrlSessionDownload(vid: video.vid, level: Int32(video.level))
+                let downloader = PvUrlSessionDownload(vid: video.vid, level: PvLevel(rawValue: Int32(video.level))!)
                 //设置下载代理为自身，需要实现四个代理方法download delegate
                 downloader?.setDownloadDelegate(self)
                 downloaderDictionary[video.vid] = downloader
@@ -55,7 +55,9 @@ class DownloadListController:UITableViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(handleBackgroundSession), name: NSNotification.Name(rawValue: PLVBackgroundSessionUpdateNotification), object: nil)
         super.viewDidLoad()
     }
-    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
     func startAll() {
         if started {
             for item in downloaderDictionary {
@@ -200,6 +202,7 @@ extension DownloadListController {
             downloaderDictionary.removeValue(forKey: video.vid)
         }
         PvUrlSessionDownload.deleteVideo(video.vid, level: Int32(video.level))
+        FMDBHelper.shared.removeDownload(video: video)
         tableView.reloadData()
         
     }

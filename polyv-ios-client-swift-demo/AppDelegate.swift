@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         // Override point for customization after application launch.
         //download dir
-        PolyvSettings.shared().downloadDir = NSHomeDirectory().appending("Documents/plvideo/a")
+        PolyvSettings.shared().downloadDir = NSHomeDirectory().appending("/Documents/plvideo/a")
         PolyvSettings.shared().logLevel = .all
         PolyvSettings.shared().httpDNSEnable = true
         
@@ -29,8 +29,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         return true
     }
-
+    func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) {
+        let userInfo = [
+            PLVSessionIdKey:identifier,
+            PLVBackgroundSessionCompletionHandlerKey:completionHandler
+        ] as [String : Any]
+        NotificationCenter.default.post(name: NSNotification.Name(PLVBackgroundSessionUpdateNotification), object: self, userInfo: userInfo)
+    }
     func applicationWillResignActive(_ application: UIApplication) {
+        PolyvSettings.shared().reload()
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
     }

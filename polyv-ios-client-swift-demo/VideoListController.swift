@@ -29,16 +29,7 @@ class VideoListController:UITableViewController,UIAlertViewDelegate {
                 let jsonData = try? JSONSerialization.jsonObject(with: data!, options: []) as! [String:Any]
                 if let videos = jsonData?["data"] as? [[String:Any]] {
                     for item in videos {
-                        let video = Video()
-                        video.title = item["title"] as! String
-                        video.desc = item["context"] as! String
-                        video.vid = item["vid"] as! String
-                        video.duration = item["duration"] as! String
-                        video.piclink = (item["first_image"] as! String).replacingOccurrences(of: "http://", with: "https://")
-//                        video.df = item["df"] as! Int32
-                        video.seed = item["seed"] as! Int
-                        video.allfilesize = item["filesize"] as! [Int64]
-                        
+                        let video = Video(withJSON: item)
                         self.videoList.append(video)
                     }
                     DispatchQueue.main.async {
@@ -99,7 +90,7 @@ class VideoListController:UITableViewController,UIAlertViewDelegate {
         }
     }
     func alertView(_ alertView: UIAlertView, willDismissWithButtonIndex buttonIndex: Int) {
-        guard buttonIndex > 0, buttonIndex < 3 else {return}
+        guard buttonIndex > 0, buttonIndex <= 3 else {return}
         video.level = buttonIndex
         video.filesize = video.allfilesize[buttonIndex-1]
         fmdbHelper.addDownload(video: video)
