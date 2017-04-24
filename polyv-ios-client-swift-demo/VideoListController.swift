@@ -19,8 +19,19 @@ class VideoListController:UITableViewController,UIAlertViewDelegate {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.rowHeight = 101
+        
+        let refresh = UIRefreshControl()
+        refresh.attributedTitle = NSAttributedString(string: "重新加载")
+        refresh.addTarget(self, action: #selector(reloadVideoList), for: .valueChanged)
+        
+        self.refreshControl = refresh
+        reloadVideoList()
+       
+    }
+    func reloadVideoList() {
+        refreshControl?.beginRefreshing()
         var request = URLRequest(url: URL(string: "https://demo.polyv.net/data/video.js")!)
-
+        
         request.httpMethod = "GET"
         
         URLSession.shared.dataTask(with: request) { (data, response, error) in
@@ -34,14 +45,14 @@ class VideoListController:UITableViewController,UIAlertViewDelegate {
                     }
                     DispatchQueue.main.async {
                         self.tableView.reloadData()
+                        self.refreshControl?.endRefreshing()
                     }
                 } else {
                     print("______ 账号下暂无视频")
                 }
             }
-        }.resume()
+            }.resume()
     }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         navigationController?.isNavigationBarHidden = false
