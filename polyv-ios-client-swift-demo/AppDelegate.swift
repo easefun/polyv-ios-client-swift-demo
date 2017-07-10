@@ -17,17 +17,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         // Override point for customization after application launch.
+        // 监听SDK错误通知
+        NotificationCenter.default.addObserver(self, selector: #selector(errorDidOccur), name: NSNotification.Name.PLVErrorNotification, object: nil)
+        
+        
+        
         //download dir
-        PolyvSettings.shared().downloadDir = NSHomeDirectory().appending("/Documents/plvideo/a")
-        PolyvSettings.shared().logLevel = .all
-        PolyvSettings.shared().httpDNSEnable = true
+        PolyvSettings.shared.downloadDir = NSHomeDirectory().appending("/Documents/plvideo/a")
+        PolyvSettings.shared.logLevel = .all
+        PolyvSettings.shared.httpDNSEnable = true
         
         let appKey = "iPGXfu3KLEOeCW4KXzkWGl1UYgrJP7hRxUfsJGldI6DEWJpYfhaXvMA+32YIYqAOocWd051v5XUAU17LoVlgZCSEVNkx11g7CxYadcFPYPozslnQhFjkxzzjOt7lUPsWF/CO2xt5xZemQCBkkSKLGA=="
         let config = PolyvUtil.decryptUserConfig(appKey.data(using: .utf8))!
-        PolyvSettings.shared().initVideoSettings(config[1] as! String, readtoken: config[2] as! String, writetoken: config[3] as! String, userId: config[0] as! String)
+        PolyvSettings.shared.initVideoSettings(config[1] as! String, readtoken: config[2] as! String, writetoken: config[3] as! String, userId: config[0] as! String)
         
 
         return true
+    }
+    /// 错误通知响应
+    func errorDidOccur(_ notificaiton:NSNotification) {
+        if let s = notificaiton.userInfo?[PLVErrorMessageKey] {
+            print("error info = \(s)" )
+        }
+        
     }
     func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) {
         let userInfo = [
@@ -37,7 +49,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         NotificationCenter.default.post(name: NSNotification.Name(PLVBackgroundSessionUpdateNotification), object: self, userInfo: userInfo)
     }
     func applicationWillResignActive(_ application: UIApplication) {
-        PolyvSettings.shared().reload()
+        PolyvSettings.shared.reload()
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
     }

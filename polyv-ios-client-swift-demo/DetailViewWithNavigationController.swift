@@ -55,7 +55,8 @@ class DetailViewWithNavigationController:UIViewController {
         videoPlayer.enableDanmu(true)
         // 是否开启截图
         videoPlayer.enableSnapshot = true
-        
+        // 开启问答
+        self.videoPlayer.enableExam = true
 //        videoPlayer.autoContinue = true
 //        videoPlayer.shouldAutoplay = false
         /**

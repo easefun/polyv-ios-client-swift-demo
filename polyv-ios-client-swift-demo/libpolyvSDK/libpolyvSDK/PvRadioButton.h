@@ -11,18 +11,18 @@
 @protocol PvRadioButtonDelegate;
 
 @interface PvRadioButton : UIButton {
-    NSString                        *_groupId;
-    BOOL                            _checked;
-    id<PvRadioButtonDelegate> __unsafe_unretained      _delegate;
+    NSString *_groupId;
+    BOOL _checked;
+    id<PvRadioButtonDelegate> __unsafe_unretained _delegate;
 }
 
-@property(nonatomic, assign)id<PvRadioButtonDelegate>   delegate;
-@property(nonatomic, copy, readonly)NSString            *groupId;
+@property(nonatomic, assign)id<PvRadioButtonDelegate> delegate;
+@property(nonatomic, copy, readonly)NSString *groupId;
 @property(nonatomic, assign)BOOL checked;
 
-- (id)initWithDelegate:(id)delegate groupId:(NSString*)groupId;
+- (id)initWithDelegate:(id)delegate groupId:(NSString *)groupId;
 
--(void)setDelegate:(id<PvRadioButtonDelegate>)delegate groupId:(NSString*)groupId;
+-(void)setDelegate:(id<PvRadioButtonDelegate>)delegate groupId:(NSString *)groupId;
 @end
 
 @protocol PvRadioButtonDelegate <NSObject>

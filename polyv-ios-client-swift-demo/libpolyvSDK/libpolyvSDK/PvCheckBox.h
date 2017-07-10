@@ -11,9 +11,9 @@
 @protocol PvCheckBoxDelegate;
 
 @interface PvCheckBox : UIButton {
-	NSString *_groupId;
-	BOOL _checked;
-	id _userInfo;
+    NSString *_groupId;
+    BOOL _checked;
+    id _userInfo;
 }
 @property(nonatomic, copy, readonly)NSString *groupId;
 

@@ -11,7 +11,7 @@
 #import "PvCheckBox.h"
 #import "PvRadioButton.h"
 @interface PvExamView : UIView<PvCheckBoxDelegate,PvRadioButtonDelegate>{
-    NSMutableDictionary * _answerDictionary;
+    NSMutableDictionary *_answerDictionary;
 }
 
 typedef void (^viewClosedBlock)(int seekto);
@@ -24,14 +24,14 @@ typedef void (^viewClosedBlock)(int seekto);
 @property (strong, nonatomic) UILabel *headLabel;
 @property (strong, nonatomic) UILabel *tipViewHeadLabel;
 @property (strong, nonatomic) UILabel *questionLabel;
-@property (strong, nonatomic) UIScrollView * scrollview;
-@property (strong, nonatomic) UIView * tipView;
+@property (strong, nonatomic) UIScrollView *scrollview;
+@property (strong, nonatomic) UIView *tipView;
 
-@property PvExam* pvExam;
+@property PvExam *pvExam;
 @property (readwrite, copy) viewClosedBlock closedBlock;
 @property BOOL right;
 
 - (void)resetExamHistory;
--(void)setExam:(PvExam*)exam;
+- (void)setExam:(PvExam *)exam;
 
 @end

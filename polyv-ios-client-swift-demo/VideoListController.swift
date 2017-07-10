@@ -15,7 +15,7 @@ class VideoListController:UITableViewController,UIAlertViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        LogPrint("Download dir \(PolyvSettings.shared().downloadDir!)")
+        LogPrint("Download dir \(PolyvSettings.shared.downloadDir!)")
         tableView.delegate = self
         tableView.dataSource = self
         tableView.rowHeight = 101

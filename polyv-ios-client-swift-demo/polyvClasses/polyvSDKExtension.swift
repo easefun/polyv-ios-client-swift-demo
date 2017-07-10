@@ -8,7 +8,10 @@
 
 import UIKit
 extension PolyvSettings {
-    static func shared() -> PolyvSettings {
+    static var shared: PolyvSettings {
         return PolyvSettings.sharedInstance() as! PolyvSettings
     }
+}
+extension Notification.Name {
+    static let PLVErrorNotification:Notification.Name = Notification.Name(rawValue: "PLVErrorNotification")
 }
